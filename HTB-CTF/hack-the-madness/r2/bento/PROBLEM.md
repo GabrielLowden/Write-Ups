@@ -126,11 +126,11 @@ To solve this challenge, I followed a systematic approach that involved the foll
          - It also calls "(Get-Item 'HKCU:Software\76fiQjA1').GetValue('erIyfJl7')", so the hive "Software\76fiQjA1" has a key "erIyfJl7" that contains a base64 encoded string.
          - It also is under the Run hive, calls powershell, and the flag seem like they may make the value run at startup, and background and hide the process.
       + This is definetely on the right track. Let copy the value of the "erIyfJl7" key into cyber chef and base64 decode it.
-         - ![Image Failed to Load](/cc_decode_base64)
+         ![Image Failed to Load](/cc_decode_base64)
          - This reveals more code. Lets Review it after removing null bytes and saving as decoded_string.txt.
          - Inside there is another call to "FromBase64String()", lets paste this string into cyberchef and decode it.
          - Using this recipe....
-         - ![Recipe Failed to Load](/recipe.png)
+         ![Recipe Failed to Load](/recipe.png)
          - You are left with another script. That contains another string base64 encoded = variable $rw
          - In this script we can see windows API calls
       + Submit/Validate: $rw
