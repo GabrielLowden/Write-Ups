@@ -1,5 +1,5 @@
 # Forensics Bento Challenge Write-Up
-
++ Author: Gabe Lowden
 ## Problem Overview
 The goal of this challenge is to analyze and solve a forensics problem by identifying critical artifacts and reconstructing events from digital evidence.
 
@@ -15,7 +15,7 @@ The goal of this challenge is to analyze and solve a forensics problem by identi
 Unfortunately the challenges are hidden after the event, and I do not remember the full problem description. However, I did keep track of the questions and my answers. I believe the problem description looked something like the following:
 
 ### Possible Problem Description
-You are taked with analyzing the output of a Noriben log to uncover the activities of an attacker who has compromised a system. The log file contains details about process behavior, network connections, file system changes, and registry changes. Your goal is to extract specific pieces of evidence from the log file that will help identify key characteristics of the attack.
+You are tasked with analyzing the output of a Noriben log to uncover the activities of an attacker who has compromised a system. The log file contains details about process behavior, network connections, file system changes, and registry changes. Your goal is to extract specific pieces of evidence from the log file that will help identify key characteristics of the attack.
 
 ### Problem Prompts
    1) What is the name of the initial malicious process?
@@ -147,6 +147,13 @@ I analyzed system logs to track suspicious activity, reconstructed the timeline 
  
 
 
+
+## Other Thoughts
+- I think the title was a reference to bento boxes a japenese style lunchbox. That has multiple compartment that holds different foods.
+   - It is a metaphor for the forensics malicious investigation in this problem. Where each log entry or small piece of base64 encoded string was a small part contributing to the larger attack.
+- There is also a DFIR Linux Distro called Bento....
+   - https://tsurugi-linux.org/index.php
+
 ---
 
 ### References
@@ -154,4 +161,6 @@ I analyzed system logs to track suspicious activity, reconstructed the timeline 
 - https://nasbench.medium.com/windows-system-processes-an-overview-for-blue-teams-42fa7a617920
 - https://www.processlibrary.com/en/
 - https://gchq.github.io/CyberChef/
+- https://tsurugi-linux.org/index.php
+- https://attack.mitre.org/techniques/
 
