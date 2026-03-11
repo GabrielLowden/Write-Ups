@@ -102,10 +102,13 @@ To solve this challenge, I followed a systematic approach that involved the foll
          - Not Network Activity no variables here
          - Not Unique Hosts no variables here
          - Processes Created probably won't be useful but is short, so a quick review reveals...
-            - Malware downloaded --> [CreateProcess] Explorer.EXE:4620 > "%UserProfile%\Downloads\Acrobat32_reader.exe "	[Child PID: 3884]
-            - After attacker migrated they opened a terminal --> [CreateProcess] Explorer.EXE:4620 > "%WinDir%\system32\cmd.exe"	[Child PID: 3404]
-            - In Terminal the execited a few commands, but no persistence mechanism --> [CreateProcess] cmd.exe:3404 > "systeminfo"	[Child PID: 784]
-                                                                                    --> [CreateProcess] cmd.exe:3404 > "whoami"	[Child PID: 5584]
+            - Malware downloaded
+               - [CreateProcess] Explorer.EXE:4620 > "%UserProfile%\Downloads\Acrobat32_reader.exe "	[Child PID: 3884]
+            - After attacker migrated they opened a terminal
+               - [CreateProcess] Explorer.EXE:4620 > "%WinDir%\system32\cmd.exe"	[Child PID: 3404]
+            - In Terminal the execited a few commands, but no persistence mechanism
+               - [CreateProcess] cmd.exe:3404 > "systeminfo"	[Child PID: 784]
+               - [CreateProcess] cmd.exe:3404 > "whoami"	[Child PID: 5584]
       + That leaves File Activity & Registry Activity, so lets review those.
          - First lets trim down each section to a new file using the following commands.
             - [cat Noriben_26_Sep_24__15_55_500478.txt | grep -A68 "File Activity:" Noriben_26_Sep_24__15_55_500478.txt | grep "Explorer.exe:4620"]
@@ -119,18 +122,22 @@ To solve this challenge, I followed a systematic approach that involved the foll
       + In our new file susRegAct.txt that contains Registry Activity from the Explorer.EXE:4620 process after the attacker pivoted.
          - It now becomes apparant that the peristance mechanism could be related to a registry change https://attack.mitre.org/techniques/T1112/
          - There is 2 root keys with changes the HKLM & HKCU 
-         - There is two log entry of particular interest --> [RegSetValue] Explorer.EXE:4620 > HKCU\SOFTWARE\76fiQjA1\erIyfJl7  =  aQBmACgAWwBJAG4A.......
-         - And --> [RegSetValue] Explorer.EXE:4620 > HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\2yGbMgAv  =  %COMSPEC% /b /c start /b /min powershell -nop -w hidden -c
-            / "sleep 0; iex([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String((Get-Item 'HKCU:Software\76fiQjA1').GetValue('erIyfJl7'))))
+         - There is two log entry of particular interest
+            - [RegSetValue] Explorer.EXE:4620 > HKCU\SOFTWARE\76fiQjA1\erIyfJl7  =  aQBmACgAWwBJAG4A.......
+            - [RegSetValue] Explorer.EXE:4620 > HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\2yGbMgAv  =  
+               / %COMSPEC% /b /c start /b /min powershell -nop -w hidden -c
+               / "sleep 0; iex([System.Text.Encoding]::Unicode.GetString([System.Convert]::
+               / FromBase64String((Get-Item 'HKCU:Software\76fiQjA1').GetValue('erIyfJl7'))))
          - The second RegSetValue log entry uses "FromBase64String()", so this is probably related to the base64 encoded payload we are looking for.
          - It also calls "(Get-Item 'HKCU:Software\76fiQjA1').GetValue('erIyfJl7')", so the hive "Software\76fiQjA1" has a key "erIyfJl7" that contains a base64 encoded string.
          - It also is under the Run hive, calls powershell, and the flag seem like they may make the value run at startup, and background and hide the process.
       + This is definetely on the right track. Let copy the value of the "erIyfJl7" key into cyber chef and base64 decode it.
-         ![Image Failed to Load](/cc_decode_base64)
-         - This reveals more code. Lets Review it after removing null bytes and saving as decoded_string.txt.
+         ![Image Failed to Load](/screenshots/cc_decode_base64.png)
+         - This reveals more code. Lets Review it after removing null bytes and saving as decoded_regKey.dat.
          - Inside there is another call to "FromBase64String()", lets paste this string into cyberchef and decode it.
          - Using this recipe....
-         ![Recipe Failed to Load](/recipe.png)
+         ![Recipe Failed to Load](/screenshots/recipe.png)
+         - decrypted_payload_script.dat
          - You are left with another script. That contains another string base64 encoded = variable $rw
          - In this script we can see windows API calls
       + Submit/Validate: $rw

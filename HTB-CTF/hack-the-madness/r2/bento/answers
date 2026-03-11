@@ -5,6 +5,6 @@
 3) What is the name of the new process the attacker migrated to?
     Explorer.EXE:4620
 4) What is the name of the variable that stores the final base64 payload in the persistence mechanism created by the malware?
-    
+    $rw    
 5) What is the PID of the process created by the attacker to execute system commands?
     [CreateProcess] Explorer.EXE:4620 > "%WinDir%\system32\cmd.exe"	[Child PID: 3404]
