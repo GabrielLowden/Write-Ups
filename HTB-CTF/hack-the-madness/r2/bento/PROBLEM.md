@@ -35,18 +35,15 @@ The following forensic artifacts were provided as part of the challenge:
    + Network Traffic
    + Unique Hosts
 
-## Methodology
-To solve this challenge, I followed a systematic approach that involved the following steps:
+### Methodology
 
-1. **Log Analysis**:
-   - Analyzed system logs to identify any suspicious activity, such as unauthorized access attempts or abnormal system behavior.
-   - 
-   - 
+I analyzed system logs to track suspicious activity, reconstructed the timeline of the attack, and identified key stages:
 
-2. **Timeline Reconstruction**:
-   - Based on the log entries, I reconstructed the timeline of events.
-      - ....
-      - ....
+- **Victim downloaded malware**.
+- **Malware contacted attacker IP**.
+- **Attacker escalated privileges** using `explorer.exe`.
+- **Attacker ran terminal commands** (e.g., `whoami`, `systeminfo`).
+- **Attacker modified system settings** with `SetRegistryValues`.
       
    
 
@@ -149,11 +146,6 @@ To solve this challenge, I followed a systematic approach that involved the foll
       + Sumbit/Validate: 3404
  
 
-## Conclusion
-In this challenge, I successfully analyzed the provided forensic evidence and reconstructed the timeline of events leading to the security breach. The key techniques included disk image analysis, memory analysis, and log examination. The solution involved recovering deleted files, identifying hidden processes in memory, and analyzing logs to determine the attacker's actions.
-
-### Key Takeaways
-- Payloads 
 
 ---
 
